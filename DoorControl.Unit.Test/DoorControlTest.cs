@@ -46,5 +46,12 @@ namespace DoorControl.Unit.Test
             Assert.That(fDoor.TimesOpened,Is.EqualTo(timesOpened));
             Assert.That(fDoor.TimesClosed,Is.EqualTo(timesClosed));
         }
+
+        [TestCase(true)]
+        public void DoorBreached_RaiseAlarm(bool alarmRaised)
+        {
+            fDoor.Open(uut);
+            Assert.That(fAlarm.AlarmRaised,Is.EqualTo(alarmRaised));
+        }
     }
 }

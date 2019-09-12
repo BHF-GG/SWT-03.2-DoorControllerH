@@ -13,7 +13,7 @@ namespace DoorControllerH.Classes
         private IEntryNotification _entryNotification;
         private IAlarm _alarm;
         private IUserValidation _userValidation;
-        private bool _doorOpening, _doorClosing;
+        private bool _doorOpenOK;
 
         public DoorControl(IDoor door, IEntryNotification entryNotification, IAlarm alarm, IUserValidation userValidation)
         {
@@ -21,6 +21,7 @@ namespace DoorControllerH.Classes
             _entryNotification = entryNotification;
             _alarm = alarm;
             _userValidation = userValidation;
+            _doorOpenOK = false;
 
         }
 
@@ -28,9 +29,9 @@ namespace DoorControllerH.Classes
         {
             if (_userValidation.ValidateEntryRequest(id))
             {
+                _doorOpenOK = true;
                 _door.Open(this);
                 _entryNotification.NotifyEntryGranted();
-                _doorOpening = true;
             }
             else
             {
@@ -41,11 +42,13 @@ namespace DoorControllerH.Classes
         public void DoorOpen()
         {
             _door.Close(this);
+            if (!_doorOpenOK)
+                _alarm.RaiseAlarm();
         }
 
         public void DoorClosed()
         {
-            
+            _doorOpenOK = false;
         }
 
     }
